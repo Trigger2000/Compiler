@@ -1,5 +1,5 @@
 %{
-    #include "decl.h"
+    #include "parse_tree.h"
 
     struct mytype
     {
@@ -10,7 +10,7 @@
     };
     #define YYSTYPE mytype
 
-    #include "b.tab.h"
+    #include "b.tab.hpp"
 
     void yyerror(char *s);
 %}
@@ -22,7 +22,7 @@
 
 %%
 
-[/][/].*\n      ; // comment
+[/][/].*\n      ;
 if              return IF;
 else            return ELSE;
 while           return WHILE;
@@ -32,15 +32,18 @@ exit            return EXIT;
 >=              return GE;
 !=              return NE;
 
+
 [0-9]+          { 
                     yylval.str = yytext;
                     return NUM;
                 }
 
+
 [a-zA-Z_][a-zA-Z0-9_]*  { 
                         yylval.str = yytext;
                         return ID;
                         }
+
 
 ["]             { yylval.str = ""; BEGIN(STR); }
 <STR>[^\\\n"]+  yylval.str += yytext;
@@ -49,7 +52,7 @@ exit            return EXIT;
 <STR>\\         yyerror("Invalid escape sequence");
 <STR>\n         yyerror("Newline in string literal");
 <STR>["]        { BEGIN(INITIAL); return STRING; }
-[ \t\r\n]       ; // whitespace
+[ \t\r\n]       ;
 [-{};()=<>+*/!,] { return *yytext; }
 .               yyerror("Invalid character");
 

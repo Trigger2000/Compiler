@@ -1,4 +1,4 @@
-#include "decl.h"
+#include "parse_tree.h"
 
 inline regnum newreg() 
 {
@@ -136,13 +136,12 @@ cmdlist ifop::emit()
     cmdlist result = cond->emit(),
     thenops = this->thenops.emit(),
     elseops = this->elseops.emit();
-            // condition is false => skip thenops
+
     result.push_back(command(command::jz, cond->dest, thenops.size()+!!elseops.size()));
 
     append(result, thenops);
     if (elseops.size()) 
     {
-    // skip elseops
         result.push_back(command(command::jz, 0, elseops.size()));
         append(result, elseops);
     }
@@ -174,11 +173,10 @@ cmdlist whileop::emit()
 {
     cmdlist result = cond->emit();
     cmdlist ops = this->ops.emit();
-    int skip = 2 + result.size() + ops.size(); // total loop size
-    // condition is false => skip ops
+    int skip = 2 + result.size() + ops.size();
     result.push_back(command(command::jz, cond->dest, ops.size()+1));
     append(result, ops);
-    result.push_back(command(command::jz, 0, -skip)); // to the beginning
+    result.push_back(command(command::jz, 0, -skip));
     return result;
 }
 
@@ -318,7 +316,7 @@ cmdlist varref::emit()
         yyerror("Undefined variable");
     }
 
-    return cmdlist(); // no commands
+    return cmdlist();
 }
 
 funcall::funcall(const std::string& name, const std::list<expr_t*>& args):
@@ -402,7 +400,7 @@ funcall::~funcall()
     }
 }
 
-std::string replaceAll(const std::string& where, const std::string& what, const std::string& withWhat) 
+/*std::string replaceAll(const std::string& where, const std::string& what, const std::string& withWhat) 
 {
     std::string result = where;
     while(1) 
@@ -411,4 +409,4 @@ std::string replaceAll(const std::string& where, const std::string& what, const 
         if (pos==-1) return result;
         result.replace(pos, what.size(), withWhat);
     }
-}
+} */

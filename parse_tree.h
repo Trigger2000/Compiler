@@ -9,7 +9,7 @@
 #include "commands.h"
 
 typedef std::list<command> cmdlist;
-extern cmdlist pcode; // конечный результат
+extern cmdlist pcode;
 extern std::map <std::string, regnum> vars;
 extern std::map <std::string, short> strings;
 extern regnum lastreg;
@@ -24,7 +24,7 @@ template<typename C, typename K>
 inline bool contains(const C& contnr, const K& key);
 
 class oper_t 
-{ // abstract
+{
 public: 
     virtual ~oper_t();
     virtual void print(int indent = 0) = 0;
@@ -36,7 +36,7 @@ protected:
 
 
 class expr_t 
-{ // abstract
+{
 public:
     virtual ~expr_t();
     virtual void print() = 0;
@@ -48,7 +48,7 @@ protected:
 };
 
 
-class block: public oper_t 
+class block: public oper_t
 {
 public:
     block();
@@ -203,4 +203,4 @@ private:
 };
 
 //глобальная замена
-std::string replaceAll(const std::string& where, const std::string& what, const std::string& withWhat);
+//std::string replaceAll(const std::string& where, const std::string& what, const std::string& withWhat);

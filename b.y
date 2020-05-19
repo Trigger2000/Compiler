@@ -1,5 +1,5 @@
 %{
-    #include "decl.h"
+    #include "parse_tree.h"
 
     struct mytype
     {
@@ -9,7 +9,7 @@
         std::list<expr_t*> args;
     };
 
-    cmdlist pcode; // конечный результат
+    cmdlist pcode;
     std::map <std::string, regnum> vars;
     std::map <std::string, short> strings;
     regnum lastreg = 0;
@@ -41,11 +41,11 @@
 PROGRAM: OPS    { 
                     pcode = $1->emit(); 
                     delete $1;
-                    pcode.push_back(command(command::hlt, 0,0));
+                    pcode.push_back(command(command::hlt, 0, 0));
                 }
 ;
 
-OPS:    OP                              // inherit
+OPS:    OP                              
 |       OPS OP                          { $$ = new block($1, $2); }
 ;
 
@@ -61,12 +61,12 @@ OP2:    IF '(' EXPR ')' OP              { $$ = new ifop($3, $5, new block()); }
 |       WHILE '(' EXPR ')' OP2          { $$ = new whileop($3, $5); }
 ;
 
-OP:     OP1 | OP2 ;                     // inherit
+OP:     OP1 | OP2 ;
 
-EXPR:   EXPR1                           // inherit
+EXPR:   EXPR1
 |       ID '=' EXPR                     { $$ = new assign($1, $3); }
 
-EXPR1:  EXPR2                           // inherit
+EXPR1:  EXPR2
 |       EXPR1 EQ EXPR2                  { $$ = new binary(command::eq, $1, $3); }
 |       EXPR1 LE EXPR2                  { $$ = new binary(command::le, $1, $3); }
 |       EXPR1 GE EXPR2                  { $$ = new binary(command::ge, $1, $3); }
@@ -75,12 +75,12 @@ EXPR1:  EXPR2                           // inherit
 |       EXPR1 '<' EXPR2                 { $$ = new binary(command::lt, $1, $3); }
 ;
 
-EXPR2:  TERM                            // inherit
+EXPR2:  TERM
 |       EXPR2 '+' TERM                  { $$ = new binary(command::add, $1, $3); }
 |       EXPR2 '-' TERM                  { $$ = new binary(command::sub, $1, $3); }
 ;
 
-TERM:   VAL                             // inherit
+TERM:   VAL
 |       TERM '*' VAL                    { $$ = new binary(command::mul, $1, $3); }
 |       TERM '/' VAL                    { $$ = new binary(command::div, $1, $3); }
 ;
@@ -98,8 +98,8 @@ ARGS:                                   { $$.clear(); }
 |       ARGS ',' ARG                    { $$ = $1; $$.push_back($3); }
 ;
 
-ARG:    EXPR                            // inherit
-|       STRING                          { $$=new string($1); }
+ARG:    EXPR
+|       STRING                          { $$ = new string($1); }
 ;
 
 %%
@@ -111,16 +111,16 @@ int main()
     std::vector<int> offsets(strings.size());
     for(auto&& item: strings)
     {
-            offsets[item.second-1] = offset;
+            offsets[item.second - 1] = offset;
             offset += item.first.length();
             offset++;
     }
 
     for (auto&& item: pcode) 
-    { // dump code
-            if (item.opcode==command::echo && !item.dest) // fixup
+    {
+            if (item.opcode == command::echo && !item.dest)
             {
-                    item.imm = offsets[item.imm-1];
+                    item.imm = offsets[item.imm - 1];
             }
             write(1, &item, sizeof(item));
     }
