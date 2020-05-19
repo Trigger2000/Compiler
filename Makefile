@@ -4,7 +4,7 @@ all:
 	g++ -c real.cpp
 	bison -d b.y
 	flex l.lex
-	g++ -fshort-enums real.o b.tab.c lex.yy.c
+	g++ -fshort-enums real.o b.tab.cpp lex.yy.cpp
 	g++ -fshort-enums start.cpp -o start
 
 clear:
