@@ -194,7 +194,7 @@ void exitop::print(int indent)
 cmdlist exitop::emit()
 {
     cmdlist result;
-    result.push_back(command(command::hlt, 0,0));
+    result.push_back(command(command::hlt, 0, 0));
     return result;
 }
 
@@ -245,7 +245,7 @@ cmdlist assign:: emit()
 {
     cmdlist result = value->emit();
     dest = value->dest;
-    if(contains(vars, name))
+    if (contains(vars, name))
     {
         result.push_back(command(command::add, vars[name], value->dest, 0)); // mov
     }
@@ -342,9 +342,9 @@ void funcall::print()
 cmdlist funcall::emit()
 {
     cmdlist result;
-    if(!name.compare("input")) 
+    if(name.compare("input") == 0) 
     {
-        if(args.size())
+        if (args.size())
         {
             yyerror("Input: too many arguments");
         }
@@ -352,7 +352,7 @@ cmdlist funcall::emit()
         dest = newreg();
         result.push_back(command(command::input, dest, 0));
     } 
-    else if (!name.compare("echo")) 
+    else if (name.compare("echo") == 0) 
     {
         if(!args.size())
         {
@@ -362,10 +362,10 @@ cmdlist funcall::emit()
         dest = 0;
         for (auto&& item: args)
         {
-            string *s = dynamic_cast<string*>(item);
+            string* s = dynamic_cast<string*>(item);
             if(s) 
             { // string
-                if(contains(strings, s->text))
+                if (contains(strings, s->text))
                 {
                     result.push_back(command(command::echo, 0, strings[s->text]));
                 }

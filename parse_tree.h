@@ -1,12 +1,12 @@
 #pragma once
 
 #include <iostream>
-#include <vector>
 #include <list>
 #include <string>
 #include <map>
 #include <unistd.h>
 #include "commands.h"
+#include "vector/vector.hpp"
 
 typedef std::list<command> cmdlist;
 extern cmdlist pcode;

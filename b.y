@@ -108,24 +108,26 @@ int main()
 {
     yyparse();
     int offset = pcode.size()*sizeof(command);
-    std::vector<int> offsets(strings.size());
-    for(auto&& item: strings)
+    myvector<int> offsets(strings.size());
+
+    for(const auto& item: strings)
     {
             offsets[item.second - 1] = offset;
             offset += item.first.length();
             offset++;
     }
 
-    for (auto&& item: pcode) 
+    for (auto& item: pcode) 
     {
             if (item.opcode == command::echo && !item.dest)
             {
                     item.imm = offsets[item.imm - 1];
             }
+
             write(1, &item, sizeof(item));
     }
 
-    for(auto&& item: strings)
+    for(const auto& item: strings)
     {
             write(1, item.first.c_str(), item.first.length()+1);
     }
